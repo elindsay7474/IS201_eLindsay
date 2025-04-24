@@ -1,0 +1,68 @@
+#head{
+    color:black;
+    text-align: center;
+    text-decoration: none;
+}
+
+#top {
+    position: relative;
+      bottom: 6px;
+      text-align: left;
+      padding: 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      z-index: 1000;
+    }
+
+.emphasizedText{
+    font-style: italic;
+    color:rgb(20, 2, 102);
+    font-weight: bold;
+    text-align: left;
+}
+
+#links{
+    font-weight: lighter;
+    text-align: right;
+}
+
+body{
+    background-color: rgb(208, 232, 248);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-align: center; 
+    margin: 20px;
+    border: 50px solid rgb(175, 1, 207);
+    padding: 20px;
+}
+
+.centered-list{
+    text-align: center;
+    padding-left: 0;
+    list-style-position: inside;
+    color: rgb(45, 2, 73);
+    margin: 1rem auto;
+}
+
+.centered-media {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding-top: 56.25%; /* 16:9 ratio (9 / 16 = 0.5625) */
+}
+
+.centered-media iframe,
+.centered-media object,
+.centered-media img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display:block;
+}
+
+#img {
+    margin-top: 40px;
+}

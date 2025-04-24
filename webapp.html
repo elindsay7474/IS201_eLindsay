@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landmark Guessing Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #d0f0c0, #ffe5e0);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #004d00;
+    }
+
+    #links {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    #links a {
+      display: block;
+      color: #004d00;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 5px;
+    }
+
+    .game-container {
+      padding: 30px;
+      border: 5px solid #006400;
+      box-shadow: 0 0 0 10px #fa8072, 0 0 0 20px #ffe5e0, 0 0 0 30px #d0f0c0;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+      width: 60%;
+      max-width: 400px;
+    }
+
+    .landmark {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #006400;
+      margin: 20px 0;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .option-button {
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #004d00;
+      background-color: #fa8072;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .option-button.wiggle {
+      animation: wiggle 0.5s;
+    }
+
+    @keyframes wiggle {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    .message {
+      color: red;
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+
+    .score {
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .play-again {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #fa8072;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!--navigation to professional-looking page (resume) and scratch page (interests)-->   
+  <div id="links">
+    <a href="resume(index).html">Résumé</a>
+    <a href="interests(scratch).html">Interests</a>
+  </div>
+
+  <div class="game-container">
+    <div class="landmark" id="landmark">Loading...</div>
+    <div class="options" id="options"></div>
+    <div class="message" id="message"></div>
+    <div class="score" id="score">Score: 0</div>
+    <button class="play-again" id="playAgainBtn" onclick="startGame()">Play Again</button>
+  </div>
+
+  <script>
+    const landmarks = [
+      { name: "Eiffel Tower", country: "France" },
+      { name: "Great Wall of China", country: "China" },
+      { name: "Statue of Liberty", country: "United States" },
+      { name: "Christ the Redeemer", country: "Brazil" },
+      { name: "Taj Mahal", country: "India" },
+      { name: "Big Ben", country: "United Kingdom" },
+      { name: "Sydney Opera House", country: "Australia" },
+      { name: "Colosseum", country: "Italy" },
+      { name: "Machu Picchu", country: "Peru" },
+      { name: "Petra", country: "Jordan" }
+    ];
+
+    const countries = [
+      "France", "China", "United States", "Brazil", "India",
+      "United Kingdom", "Australia", "Italy", "Peru", "Jordan"
+    ];
+
+    let currentRound = 0;
+    let score = 0;
+    let tries = 0;
+    let currentLandmark;
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame() {
+      currentRound = 0;
+      score = 0;
+      document.getElementById('score').textContent = 'Score: 0';
+      document.getElementById('playAgainBtn').style.display = 'none';
+      nextRound();
+    }
+
+    function nextRound() {
+      if (currentRound >= 5) {
+        document.getElementById('landmark').textContent = 'Game Over!';
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('message').textContent = '';
+        document.getElementById('playAgainBtn').style.display = 'block';
+        return;
+      }
+
+      tries = 0;
+      currentLandmark = landmarks[Math.floor(Math.random() * landmarks.length)];
+      document.getElementById('landmark').textContent = currentLandmark.name;
+      const options = shuffle([currentLandmark.country, ...shuffle(countries.filter(c => c !== currentLandmark.country)).slice(0, 4)]);
+
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      options.forEach(country => {
+        const button = document.createElement('button');
+        button.className = 'option-button';
+        button.textContent = country;
+        button.onclick = () => checkAnswer(button, country);
+        optionsDiv.appendChild(button);
+      });
+
+      document.getElementById('message').textContent = '';
+    }
+
+    function checkAnswer(button, selectedCountry) {
+      if (selectedCountry === currentLandmark.country) {
+        const points = 3 - tries;
+        score += points;
+        document.getElementById('score').textContent = `Score: ${score}`;
+        currentRound++;
+        nextRound();
+      } else {
+        tries++;
+        button.classList.add('wiggle');
+        setTimeout(() => button.classList.remove('wiggle'), 500);
+        if (tries >= 3) {
+          document.getElementById('message').textContent = `Out of tries! The correct answer was ${currentLandmark.country}.`;
+          currentRound++;
+          setTimeout(nextRound, 2000);
+        } else {
+          document.getElementById('message').textContent = 'Incorrect, try again';
+        }
+      }
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
